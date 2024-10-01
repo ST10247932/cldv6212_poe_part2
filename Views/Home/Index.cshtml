@@ -1,0 +1,160 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - ABC Retail</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: black; /* Light background color */
+            color: #495057; /* Darker text color */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        .navbar {
+            background-color: #343a40; /* Dark grey background */
+            padding: 15px 20px;
+            display: flex; /* Use flexbox for alignment */
+            justify-content: center; /* Center content horizontally */
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #f8f9fa; /* Light text color */
+            text-align: center; /* Center align text */
+        }
+
+        .hero {
+            background: url('https://i.pinimg.com/564x/a2/3d/b9/a23db9fae36a9c3f4be800fea73668ed.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #f8f9fa; /* Light text color */
+            min-height: 100vh; /* Cover viewport height */
+            padding: 120px 20px; /* Padding for spacing */
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .hero h1 {
+            font-size: 4rem; /* Larger font size */
+            font-weight: bold;
+            color: #f8f9fa; /* Light text color */
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6); /* Text shadow for readability */
+        }
+
+        .hero p {
+            font-size: 1.75rem; /* Larger font size */
+            line-height: 1.4; /* Improve line spacing */
+            font-weight: 300; /* Light font weight */
+            margin-bottom: 30px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4); /* Text shadow for readability */
+            color: #f8f9fa; /* Light text color */
+            max-width: 800px; /* Limit paragraph width */
+            margin: 0 auto; /* Center the paragraph */
+        }
+
+        .btn-primary {
+            background: black; /* Button background color */
+            border: none;
+            padding: 15px;
+            font-size: 1.25rem; /* Larger font size */
+            border-radius: 30px;
+            transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
+            margin: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Button shadow */
+            text-transform: uppercase; /* Uppercase text */
+            color: #ffffff; /* White text color */
+            width: 180px; /* Fixed width */
+            height: 60px; /* Fixed height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: bold; /* Bold text */
+        }
+
+            .btn-primary:hover {
+                background: linear-gradient(45deg, #0056b3, #003d80); /* Darker gradient on hover */
+                transform: scale(1.05);
+                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4); /* Enhanced shadow on hover */
+            }
+
+        .hero-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2 columns */
+            gap: 20px; /* Space between buttons */
+            max-width: 800px; /* Limit grid width */
+            margin: 0 auto; /* Center the grid */
+        }
+
+        .footer {
+            padding: 10px 20px; /* Compact footer */
+            background-color: transparent; /* Transparent background */
+            color: #f8f9fa; /* Light text color */
+            text-align: center;
+            border-top: none; /* Remove top border */
+        }
+
+            .footer p {
+                margin-bottom: 10px;
+                font-size: 0.875rem; /* Smaller font size */
+            }
+
+            .footer .social-icons {
+                margin-top: 10px;
+            }
+
+                .footer .social-icons a {
+                    color: #f8f9fa; /* Light color for social icons */
+                    margin: 0 10px;
+                    font-size: 1.5rem;
+                    text-decoration: none;
+                }
+    </style>
+</head>
+
+<body>
+
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Welcome to ABC Retail</h1>
+            <p>ABC Retail is transforming the online shopping experience with scalable cloud solutions that efficiently manage peak seasons, optimize order processing, and elevate customer satisfaction through real-time analytics and dependable communication systems..</p>
+            <div class="hero-buttons">
+                <a asp-controller="Files" asp-action="Index" class="btn btn-primary">Go to Files</a>
+                <a asp-controller="Product" asp-action="Index" class="btn btn-primary">Go to Products</a>
+                <a asp-controller="Order" asp-action="Index" class="btn btn-primary">Go to Orders</a>
+                <a asp-controller="Customer" asp-action="Index" class="btn btn-primary">Go to Customers</a>
+
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+
+        <div class="social-icons">
+            <a href="#"><i class="bi bi-facebook"></i></a>
+            <a href="#"><i class="bi bi-twitter"></i></a>
+            <a href="#"><i class="bi bi-linkedin"></i></a>
+        </div>
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
