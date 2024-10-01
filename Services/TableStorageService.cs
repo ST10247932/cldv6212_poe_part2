@@ -1,35 +1,49 @@
 ﻿using Azure;
 using Azure.Data.Tables;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace ABCRetailApp.Services
+namespace ABCRetailApp_Functions.Services
 {
     public class TableStorageService<T> where T : class, ITableEntity, new()
     {
         private readonly TableClient _tableClient;
+        private readonly ILogger<TableStorageService<T>> _logger;
+        private string storageConnectionString;
+        private string tableName;
 
         public TableStorageService(string storageConnectionString, string tableName)
         {
-            if (string.IsNullOrEmpty(storageConnectionString))
-                throw new ArgumentNullException(nameof(storageConnectionString), "Storage connection string cannot be null or empty.");
+            this.storageConnectionString = storageConnectionString;
+            this.tableName = tableName;
+        }
 
-            if (string.IsNullOrEmpty(tableName))
-                throw new ArgumentNullException(nameof(tableName), "Table name cannot be null or empty.");
+        public TableStorageService(string connectionString, string tableName, ILogger<TableStorageService<T>> logger)
+        {
+            _tableClient = new TableClient(connectionString, tableName);
+            _tableClient.CreateIfNotExists(); // Creates the table if it doesn't exist
+            _logger = logger;
+        }
 
-            var tableServiceClient = new TableServiceClient(storageConnectionString);
-            _tableClient = tableServiceClient.GetTableClient(tableName);
-
+        public async Task<T> GetEntityAsync(string partitionKey, string rowKey)
+        {
             try
             {
-                _tableClient.CreateIfNotExists();
+                var response = await _tableClient.GetEntityAsync<T>(partitionKey, rowKey);
+                return response.Value;
             }
-            catch (Exception ex)
+            catch (RequestFailedException ex) when (ex.Status == 404)
             {
-                throw new InvalidOperationException($"Failed to create or get table client: {ex.Message}", ex);
+                _logger.LogWarning($"Entity with PartitionKey: {partitionKey} and RowKey: {rowKey} not found.");
+                return null;
             }
         }
+
+
 
         public async Task InsertOrMergeEntityAsync(T entity)
         {
@@ -37,40 +51,6 @@ namespace ABCRetailApp.Services
                 throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
 
             await _tableClient.UpsertEntityAsync(entity);
-        }
-
-        public async Task<List<T>> RetrieveAllEntitiesAsync()
-        {
-            var entities = new List<T>();
-
-            var query = _tableClient.QueryAsync<T>();
-            await foreach (var entity in query)
-            {
-                entities.Add(entity);
-            }
-
-            return entities;
-        }
-
-        public async Task DeleteEntityAsync(T entity)
-        {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity), "Entity cannot be null.");
-
-            await _tableClient.DeleteEntityAsync(entity.PartitionKey, entity.RowKey);
-        }
-
-        public async Task<T> RetrieveEntityAsync(string partitionKey, string rowKey)
-        {
-            try
-            {
-                var response = await _tableClient.GetEntityAsync<T>(partitionKey, rowKey);
-                return response.Value;
-            }
-            catch (RequestFailedException ex)
-            {
-                throw new InvalidOperationException($"Error retrieving entity with PartitionKey: {partitionKey} and RowKey: {rowKey}. Error: {ex.Message}", ex);
-            }
         }
     }
 }

@@ -1,49 +1,59 @@
 ﻿using Azure.Storage.Queues;
 using Azure.Storage.Queues.Models;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace ABCRetailApp.Services
+namespace ABCRetailApp_Functions.Services
 {
     public class QueueStorageService
     {
         private readonly QueueClient _queueClient;
         private readonly ILogger<QueueStorageService> _logger;
 
-        public QueueStorageService(string storageConnectionString, string queueName, ILogger<QueueStorageService> logger)
+        public QueueStorageService(string connectionString, string queueName, ILogger<QueueStorageService> logger)
         {
-            var queueServiceClient = new QueueServiceClient(storageConnectionString);
-            _queueClient = queueServiceClient.GetQueueClient(queueName);
+            _queueClient = new QueueClient(connectionString, queueName);
             _queueClient.CreateIfNotExists();
             _logger = logger;
         }
 
-        public async Task SendMessageAsync(string messageText)
+        public async Task SendMessageAsync(string message)
         {
             try
             {
-                await _queueClient.SendMessageAsync(messageText);
+                if (!string.IsNullOrEmpty(message))
+                {
+                    await _queueClient.SendMessageAsync(message);  // Sends the message to the Azure queue
+                    _logger.LogInformation("Message sent to queue successfully.");
+                }
+                else
+                {
+                    _logger.LogWarning("Message is null or empty.");
+                }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error sending message");
-                throw new ApplicationException($"Error sending message: {ex.Message}", ex);
+                _logger.LogError(ex, "Error sending message to queue.");
+                throw;
             }
         }
 
-        public async Task<List<QueueMessage>> ReceiveMessagesAsync(int maxMessages = 10)
+        public async Task<QueueMessage[]> ReceiveMessagesAsync(int maxMessages = 10)
         {
-            var messages = new List<QueueMessage>();
             try
             {
                 var response = await _queueClient.ReceiveMessagesAsync(maxMessages);
-                messages.AddRange(response.Value);
+                return response.Value;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error receiving messages");
-                throw new ApplicationException($"Error receiving messages: {ex.Message}", ex);
+                _logger.LogError(ex, "Error receiving messages from the queue.");
+                throw new ApplicationException("Could not receive messages from the queue.", ex);
             }
-            return messages;
         }
 
         public async Task DeleteMessageAsync(string messageId, string popReceipt)
@@ -54,9 +64,10 @@ namespace ABCRetailApp.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error deleting message");
-                throw new ApplicationException($"Error deleting message: {ex.Message}", ex);
+                _logger.LogError(ex, "Error deleting message from the queue.");
+                throw new ApplicationException("Could not delete message from the queue.", ex);
             }
         }
+
     }
 }

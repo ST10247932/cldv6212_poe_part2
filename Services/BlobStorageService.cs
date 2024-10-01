@@ -1,10 +1,13 @@
 ﻿using Azure.Storage.Blobs;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
-namespace ABCRetailApp.Services
+namespace ABCRetailApp_Functions.Services
 {
     public class BlobStorageService
     {
